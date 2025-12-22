@@ -662,6 +662,12 @@
             return cache;
         }
 
+        const FUNCOES_SEM_AUTH = new Set(['login', 'forgotPassword']);
+
+        function obterTokenAutenticacao() {
+            return localStorage.getItem('authToken');
+        }
+
         function executarGoogleScript({ funcao, parametros = [], onSuccess, onFailure, tentativas = 0, contexto = null, mensagemErroPadrao = 'Falha na comunicação com o serviço.' }) {
             const runner = typeof google !== 'undefined' && google?.script?.run ? google.script.run : null;
             if (!runner || typeof runner[funcao] !== 'function') {
@@ -670,6 +676,18 @@
                     onFailure(new Error('Google Apps Script indisponível.'));
                 }
                 return;
+            }
+
+            if (!FUNCOES_SEM_AUTH.has(funcao)) {
+                const token = obterTokenAutenticacao();
+                if (!token) {
+                    if (typeof onFailure === 'function') {
+                        onFailure(new Error('Sessão expirada. Faça login novamente.'));
+                    }
+                    realizarLogout();
+                    return;
+                }
+                parametros = [...parametros, { authToken: token }];
             }
 
             const executarChamada = restantes => {
@@ -684,6 +702,11 @@
                 }
                 exec = exec.withFailureHandler(erro => {
                     console.error(`[AppsScript] Erro ao executar ${funcao}:`, erro);
+                    const mensagem = erro && erro.message ? erro.message : mensagemErroPadrao;
+                    if (mensagem.includes('Sessão expirada') || mensagem.includes('Acesso negado')) {
+                        mostrarLoginAlerta(mensagem);
+                        realizarLogout();
+                    }
                     if (restantes > 0) {
                         executarChamada(restantes - 1);
                         return;
@@ -1040,8 +1063,6 @@
             inicializarData();
             setupResponsiveShell();
             configurarEventListeners();
-            carregarDadosMestres();
-            carregarDados();
         });
 
         function configurarLogin() {
@@ -1057,6 +1078,8 @@
                 if (loginDom.container) loginDom.container.style.display = 'none';
                 if (mainDom.container) mainDom.container.style.display = 'block';
                 toggleAdminFeatures(role === 'admin');
+                carregarDadosMestres();
+                carregarDados();
             } else {
                 if (loginDom.container) loginDom.container.style.display = 'flex';
                 if (mainDom.container) mainDom.container.style.display = 'none';
@@ -1137,6 +1160,8 @@
                         if (loginDom.container) loginDom.container.style.display = 'none';
                         if (mainDom.container) mainDom.container.style.display = 'block';
                         toggleAdminFeatures(result.role === 'admin');
+                        carregarDadosMestres();
+                        carregarDados();
                     } else {
                         finalizarLoginAnimacao('erro');
                         mostrarLoginAlerta(result?.message || 'Credenciais inválidas.');
