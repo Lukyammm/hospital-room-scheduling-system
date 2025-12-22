@@ -83,6 +83,12 @@ const NOMES_MESES_PT = [
 // Email do administrador (substitua pelo email real)
 const ADMIN_EMAIL = 'lukyam.lmm@isgh.org.br';
 
+// Configurações de sessão e segurança
+const SESSION_CACHE_PREFIX = 'AUTH_SESSION:';
+const SESSION_TTL_SECONDS = 8 * 60 * 60; // 8 horas
+const LOGIN_MAX_TENTATIVAS = 5;
+const LOGIN_BLOQUEIO_MINUTOS = 10;
+
 let spreadsheetCache = null;
 
 function obterSpreadsheetPrincipal() {
@@ -150,6 +156,112 @@ function gerarSaltSenha() {
 function calcularHashSenhaComSalt(senha, salt) {
   const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, `${salt}${senha}`);
   return bytesParaHex(Array.from(digest));
+}
+
+function extrairTokenArgs(args) {
+  if (!args || !args.length) return '';
+  const ultimo = args[args.length - 1];
+  if (ultimo && typeof ultimo === 'object' && ultimo.authToken) {
+    return String(ultimo.authToken).trim();
+  }
+  return '';
+}
+
+function obterSessaoDoToken(token) {
+  if (!token) return null;
+  const cache = CacheService.getScriptCache();
+  const raw = cache.get(`${SESSION_CACHE_PREFIX}${token}`);
+  if (!raw) return null;
+  try {
+    const dados = JSON.parse(raw);
+    return dados && typeof dados === 'object' ? dados : null;
+  } catch (error) {
+    console.warn('Falha ao interpretar sessão no cache.', error);
+    return null;
+  }
+}
+
+function exigirSessaoValida(args, roleEsperada) {
+  const token = extrairTokenArgs(args);
+  const sessao = obterSessaoDoToken(token);
+  if (!sessao) {
+    throw new Error('Sessão expirada. Faça login novamente.');
+  }
+  if (roleEsperada && sessao.role !== roleEsperada) {
+    throw new Error('Acesso negado.');
+  }
+  return sessao;
+}
+
+function registrarSessao(matricula, role) {
+  const token = Utilities.getUuid();
+  const cache = CacheService.getScriptCache();
+  const payload = {
+    matricula: String(matricula || '').trim(),
+    role: String(role || '').trim(),
+    criadoEm: new Date().toISOString()
+  };
+  cache.put(`${SESSION_CACHE_PREFIX}${token}`, JSON.stringify(payload), SESSION_TTL_SECONDS);
+  return token;
+}
+
+function obterChaveBloqueioLogin(matricula) {
+  const identificador = String(matricula || '').trim();
+  return `LOGIN_FAIL:${identificador}`;
+}
+
+function obterControleLogin(matricula) {
+  const cache = CacheService.getScriptCache();
+  const key = obterChaveBloqueioLogin(matricula);
+  const raw = cache.get(key);
+  if (!raw) {
+    return { tentativas: 0, bloqueadoAte: 0 };
+  }
+  try {
+    const dados = JSON.parse(raw);
+    return {
+      tentativas: Number(dados.tentativas) || 0,
+      bloqueadoAte: Number(dados.bloqueadoAte) || 0
+    };
+  } catch (error) {
+    return { tentativas: 0, bloqueadoAte: 0 };
+  }
+}
+
+function registrarFalhaLogin(matricula) {
+  const cache = CacheService.getScriptCache();
+  const key = obterChaveBloqueioLogin(matricula);
+  const info = obterControleLogin(matricula);
+  const tentativas = info.tentativas + 1;
+  let bloqueadoAte = info.bloqueadoAte;
+  if (tentativas >= LOGIN_MAX_TENTATIVAS) {
+    bloqueadoAte = Date.now() + LOGIN_BLOQUEIO_MINUTOS * 60 * 1000;
+  }
+  const payload = {
+    tentativas,
+    bloqueadoAte
+  };
+  cache.put(key, JSON.stringify(payload), 24 * 60 * 60);
+  return payload;
+}
+
+function limparControleLogin(matricula) {
+  const cache = CacheService.getScriptCache();
+  const key = obterChaveBloqueioLogin(matricula);
+  cache.remove(key);
+}
+
+function validarBloqueioLogin(matricula) {
+  const info = obterControleLogin(matricula);
+  if (info.bloqueadoAte && Date.now() < info.bloqueadoAte) {
+    const restanteMs = info.bloqueadoAte - Date.now();
+    const minutos = Math.ceil(restanteMs / 60000);
+    return {
+      bloqueado: true,
+      minutosRestantes: minutos
+    };
+  }
+  return { bloqueado: false, minutosRestantes: 0 };
 }
 
 function garantirEstruturaUsuariosSheet(sheet) {
@@ -568,6 +680,7 @@ function construirResumoCadastros() {
 }
 
 function gestaoListarCadastros() {
+  exigirSessaoValida(arguments, 'admin');
   const dados = construirResumoCadastros();
   return {
     success: true,
@@ -713,22 +826,27 @@ function excluirItemCadastroSimples(tipo, colunaIndex, payload) {
 }
 
 function gestaoSalvarEspecialidade(payload) {
+  exigirSessaoValida(arguments, 'admin');
   return salvarItemCadastroSimples('especialidade', CADASTRO_COLUMNS.ESPECIALIDADES, payload);
 }
 
 function gestaoExcluirEspecialidade(payload) {
+  exigirSessaoValida(arguments, 'admin');
   return excluirItemCadastroSimples('especialidade', CADASTRO_COLUMNS.ESPECIALIDADES, payload);
 }
 
 function gestaoSalvarCategoria(payload) {
+  exigirSessaoValida(arguments, 'admin');
   return salvarItemCadastroSimples('categoria', CADASTRO_COLUMNS.CATEGORIAS, payload);
 }
 
 function gestaoExcluirCategoria(payload) {
+  exigirSessaoValida(arguments, 'admin');
   return excluirItemCadastroSimples('categoria', CADASTRO_COLUMNS.CATEGORIAS, payload);
 }
 
 function gestaoSalvarIlha(payload) {
+  exigirSessaoValida(arguments, 'admin');
   const entrada = payload || {};
   const nome = String(entrada.nome || '').trim();
   if (!nome) {
@@ -856,6 +974,7 @@ function gestaoSalvarIlha(payload) {
 }
 
 function gestaoExcluirIlha(payload) {
+  exigirSessaoValida(arguments, 'admin');
   const entrada = payload || {};
   const id = parseInt(entrada.id, 10);
   if (!Number.isInteger(id) || id < 2) {
@@ -942,6 +1061,7 @@ function gestaoExcluirIlha(payload) {
 }
 
 function gestaoSalvarSala(payload) {
+  exigirSessaoValida(arguments, 'admin');
   const entrada = payload || {};
   const numero = String(entrada.numero || '').trim();
   if (!numero) {
@@ -1066,6 +1186,7 @@ function gestaoSalvarSala(payload) {
 }
 
 function gestaoExcluirSala(payload) {
+  exigirSessaoValida(arguments, 'admin');
   const entrada = payload || {};
   const id = parseInt(entrada.id, 10);
   if (!Number.isInteger(id) || id < 2) {
@@ -1112,6 +1233,7 @@ function gestaoExcluirSala(payload) {
 }
 
 function gestaoAtualizarSalasEmLote(payload) {
+  exigirSessaoValida(arguments, 'admin');
   const entrada = payload || {};
   const salasEntrada = Array.isArray(entrada.salas) ? entrada.salas : [];
   if (!salasEntrada.length) {
@@ -1226,6 +1348,7 @@ function gestaoAtualizarSalasEmLote(payload) {
 }
 
 function gestaoListarHistoricoLogs(filtros) {
+  exigirSessaoValida(arguments, 'admin');
   const criterios = filtros && typeof filtros === 'object' ? filtros : {};
   const limite = Math.min(Math.max(parseInt(criterios.limite, 10) || 200, 1), 500);
   const busca = String(criterios.busca || '').trim().toLowerCase();
@@ -1561,6 +1684,7 @@ function include(filename) {
  */
 function getDadosCompletos(data) {
   try {
+    exigirSessaoValida(arguments);
     // Verificar cache primeiro
     const cacheKey = `dados_${data}`;
     const cache = CacheService.getScriptCache();
@@ -2042,6 +2166,7 @@ function formatarHora(hora) {
  */
 function getDadosMestres() {
   try {
+    exigirSessaoValida(arguments);
     const resumo = construirResumoCadastros();
     const resultado = {
       especialidades: resumo.especialidades.map(item => item.nome),
@@ -2077,6 +2202,7 @@ function getDadosMestresBasicos() {
  */
 function salvarAgendamento(agendamento) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Planilha não encontrada' };
@@ -2467,6 +2593,7 @@ function salvarAgendamento(agendamento) {
  */
 function atualizarStatusMultiplasSalas(salas, status, motivo) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Planilha não encontrada' };
@@ -2687,6 +2814,7 @@ function verificarConflitos(sala, data, horaInicio, horaFim, turno, agendamentoI
  */
 function removerAgendamento(id) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Planilha não encontrada' };
@@ -2736,6 +2864,7 @@ function removerAgendamento(id) {
 
 function registrarFrequenciaAgendamento(idEntrada, dadosEntrada) {
   try {
+    exigirSessaoValida(arguments);
     const id = String(idEntrada || '').trim();
     if (!id) {
       return { success: false, message: 'ID do agendamento inválido.' };
@@ -3030,6 +3159,19 @@ function limparCache() {
  */
 function login(matricula, senha) {
   try {
+    const matriculaNormalizada = String(matricula || '').trim();
+    if (!matriculaNormalizada || !String(senha || '').trim()) {
+      return { success: false, message: 'Credenciais inválidas' };
+    }
+
+    const bloqueio = validarBloqueioLogin(matriculaNormalizada);
+    if (bloqueio.bloqueado) {
+      return {
+        success: false,
+        message: `Muitas tentativas. Tente novamente em ${bloqueio.minutosRestantes} minuto(s).`
+      };
+    }
+
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Banco de usuários não encontrado' };
@@ -3050,7 +3192,7 @@ function login(matricula, senha) {
     const hashSemSaltLegacy = Array.from(digestSemSalt).toString();
 
     for (const row of data) {
-      if (row[USUARIOS_COLUMNS.MATRICULA - 1] === matricula) {
+      if (row[USUARIOS_COLUMNS.MATRICULA - 1] === matriculaNormalizada) {
         const salt = String(row[USUARIOS_COLUMNS.SALT - 1] || '').trim();
         const hashArmazenado = String(row[USUARIOS_COLUMNS.SENHA_HASH - 1] || '').trim();
         let autenticado = false;
@@ -3063,14 +3205,17 @@ function login(matricula, senha) {
         }
 
         if (autenticado) {
-          const token = Utilities.getUuid();
-          return { success: true, token, role: row[USUARIOS_COLUMNS.ROLE - 1] };
+          limparControleLogin(matriculaNormalizada);
+          const role = row[USUARIOS_COLUMNS.ROLE - 1];
+          const token = registrarSessao(matriculaNormalizada, role);
+          return { success: true, token, role };
         }
 
         break;
       }
     }
 
+    registrarFalhaLogin(matriculaNormalizada);
     return { success: false, message: 'Credenciais inválidas' };
   } catch (error) {
     console.error('Erro no login:', error);
@@ -3083,6 +3228,7 @@ function login(matricula, senha) {
  */
 function cadastrarUsuario(usuario) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Banco de usuários não encontrado' };
@@ -3199,6 +3345,7 @@ function forgotPassword(matricula) {
  */
 function getDadosAgregados(periodo, filtrosJson) {
   try {
+    exigirSessaoValida(arguments);
     const filtros = parseDashboardFiltros(filtrosJson);
     const diasEspecificos = Array.isArray(filtros.diasEspecificos) ? filtros.diasEspecificos : [];
     const intervaloDias = filtros.intervaloDias && filtros.intervaloDias.inicio && filtros.intervaloDias.fim
@@ -3958,6 +4105,7 @@ function interpretarSalaMesPeriodo(periodoEntrada) {
 
 function getMapaStatusSalasMes(statusDesejado, periodoEntrada, filtrosJson) {
   try {
+    exigirSessaoValida(arguments);
     const statusAlvo = normalizarStatusServidor(statusDesejado || 'livre') || 'livre';
     const periodoInfo = interpretarSalaMesPeriodo(periodoEntrada);
     const diasPeriodo = periodoInfo.dias;
@@ -4164,6 +4312,7 @@ function getMapaStatusSalasMes(statusDesejado, periodoEntrada, filtrosJson) {
  */
 function getRelatorioPeriodo(inicio, fim, filtrosJson) {
   try {
+    exigirSessaoValida(arguments);
     const filtros = parseRelatorioFiltros(filtrosJson);
 
     const inicioData = new Date(`${inicio}T00:00:00`);
@@ -4511,6 +4660,7 @@ function getRelatorioPeriodo(inicio, fim, filtrosJson) {
 // Nova função para atualizar um agendamento específico
 function atualizarAgendamento(id, novosDados) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Planilha não encontrada' };
@@ -4612,6 +4762,7 @@ function atualizarAgendamento(id, novosDados) {
 // Nova função para trocar dois agendamentos de sala
 function trocarAgendamentos(id1, id2) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const spreadsheet = tentarObterSpreadsheetPrincipal();
     if (!spreadsheet) {
       return { success: false, message: 'Planilha não encontrada' };
@@ -4694,6 +4845,7 @@ function trocarAgendamentos(id1, id2) {
 
 function getLogs(limit, filtroTexto) {
   try {
+    exigirSessaoValida(arguments, 'admin');
     const sheet = obterSheetLogs();
     const lastRow = sheet.getLastRow();
     if (lastRow <= 1) {
@@ -4730,12 +4882,14 @@ function getLogs(limit, filtroTexto) {
 }
 function gerarDashboardPdf(payloadJson) {
   try {
+    exigirSessaoValida(arguments);
     const payload = parseJsonSeguro(payloadJson, {});
     const periodo = payload && payload.periodo ? payload.periodo : 'dia';
     const filtros = payload && payload.filtros ? payload.filtros : {};
     const filtrosJson = JSON.stringify(filtros || {});
 
-    const principal = getDadosAgregados(periodo, filtrosJson);
+    const token = extrairTokenArgs(arguments);
+    const principal = getDadosAgregados(periodo, filtrosJson, { authToken: token });
     if (!principal || principal.error) {
       throw new Error('Não foi possível obter os dados principais do dashboard.');
     }
@@ -4745,7 +4899,7 @@ function gerarDashboardPdf(payloadJson) {
       try {
         const periodoComparativo = payload.comparativo.periodo || periodo;
         const filtrosComparativoJson = JSON.stringify(payload.comparativo.filtros || {});
-        const respostaComparativo = getDadosAgregados(periodoComparativo, filtrosComparativoJson);
+        const respostaComparativo = getDadosAgregados(periodoComparativo, filtrosComparativoJson, { authToken: token });
         if (respostaComparativo && !respostaComparativo.error) {
           comparativoDados = respostaComparativo;
         } else if (respostaComparativo && respostaComparativo.error) {
@@ -4773,6 +4927,7 @@ function gerarDashboardPdf(payloadJson) {
 
 function gerarRelatorioPdf(payloadJson) {
   try {
+    exigirSessaoValida(arguments);
     const payload = parseJsonSeguro(payloadJson, {});
     const inicio = payload && payload.inicio ? payload.inicio : null;
     const fim = payload && payload.fim ? payload.fim : null;
@@ -4783,7 +4938,8 @@ function gerarRelatorioPdf(payloadJson) {
     const filtros = payload && payload.filtros ? payload.filtros : {};
     const filtrosJson = JSON.stringify(filtros || {});
 
-    const principal = getRelatorioPeriodo(inicio, fim, filtrosJson);
+    const token = extrairTokenArgs(arguments);
+    const principal = getRelatorioPeriodo(inicio, fim, filtrosJson, { authToken: token });
     if (!principal || principal.error) {
       throw new Error('Não foi possível gerar o relatório principal.');
     }
@@ -4793,7 +4949,7 @@ function gerarRelatorioPdf(payloadJson) {
       const comp = payload.comparativo;
       if (comp.inicio && comp.fim) {
         try {
-          const respostaComparativo = getRelatorioPeriodo(comp.inicio, comp.fim, filtrosJson);
+          const respostaComparativo = getRelatorioPeriodo(comp.inicio, comp.fim, filtrosJson, { authToken: token });
           if (respostaComparativo && !respostaComparativo.error) {
             comparativoDados = respostaComparativo;
           } else if (respostaComparativo && respostaComparativo.error) {
