@@ -217,11 +217,11 @@
             </aside>
             <div class="monitor-container">
                 <div class="dashboard-section active" id="monitor-section">
-                    <div class="monitor-header">
-                        <div class="monitor-title">
-                            <i class="fas fa-desktop"></i> Monitor de Salas
+                    <div class="monitor-header page-header">
+                        <div class="page-header-title">
+                            <h2><i class="fas fa-desktop"></i> Monitor de Salas</h2>
                         </div>
-                        <div class="monitor-actions">
+                        <div class="monitor-actions page-header-actions">
                             <button class="icon-button icon-only" id="btn-atualizar" type="button" aria-label="Atualizar monitor">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
@@ -245,41 +245,41 @@
 
                 <div class="dashboard-section" id="planejamento-section">
                     <section class="planejamento-container" id="planejamento-container">
-                        <div class="planejamento-header">
-                            <div>
+                        <div class="planejamento-header page-header">
+                            <div class="page-header-title">
                                 <h2><i class="fas fa-clipboard-check"></i> Planejamento de Salas por Turno</h2>
                                 <p>Monte rapidamente o mapa de salas e valide com o agendamento oficial.</p>
                             </div>
-                            <div class="planejamento-controls">
-                                <label>
-                                    Turno
-                                    <select id="planejamento-turno">
-                                        <option value="manha">Manhã</option>
-                                        <option value="tarde">Tarde</option>
-                                        <option value="noite">Noite</option>
-                                        <option value="todos">Todos</option>
-                                    </select>
-                                </label>
-                                <label>
-                                    Profissional
-                                    <input type="text" id="planejamento-filtro-nome" placeholder="Buscar por nome">
-                                </label>
-                                <label>
-                                    Especialidade
-                                    <select id="planejamento-filtro-especialidade">
-                                        <option value="">Todas</option>
-                                    </select>
-                                </label>
-                                <button class="btn btn-success admin-only" id="planejamento-adicionar" type="button">
-                                    <i class="fas fa-user-plus"></i> Adicionar profissional
-                                </button>
-                                <button class="btn btn-secondary" id="planejamento-editar-selecionados" type="button" disabled>
-                                    <i class="fas fa-pen-to-square"></i> <span id="planejamento-editar-selecionados-texto">Editar selecionados</span>
-                                </button>
-                                <button class="btn btn-primary" id="planejamento-aplicar" type="button">
-                                    <i class="fas fa-check-double"></i> Substituir tudo
-                                </button>
-                            </div>
+                        </div>
+                        <div class="planejamento-controls page-filters page-filters-grid">
+                            <label>
+                                Turno
+                                <select id="planejamento-turno">
+                                    <option value="manha">Manhã</option>
+                                    <option value="tarde">Tarde</option>
+                                    <option value="noite">Noite</option>
+                                    <option value="todos">Todos</option>
+                                </select>
+                            </label>
+                            <label>
+                                Profissional
+                                <input type="text" id="planejamento-filtro-nome" placeholder="Buscar por nome">
+                            </label>
+                            <label>
+                                Especialidade
+                                <select id="planejamento-filtro-especialidade">
+                                    <option value="">Todas</option>
+                                </select>
+                            </label>
+                            <button class="btn btn-success admin-only" id="planejamento-adicionar" type="button">
+                                <i class="fas fa-user-plus"></i> Adicionar profissional
+                            </button>
+                            <button class="btn btn-secondary" id="planejamento-editar-selecionados" type="button" disabled>
+                                <i class="fas fa-pen-to-square"></i> <span id="planejamento-editar-selecionados-texto">Editar selecionados</span>
+                            </button>
+                            <button class="btn btn-primary" id="planejamento-aplicar" type="button">
+                                <i class="fas fa-check-double"></i> Substituir tudo
+                            </button>
                         </div>
                         <div class="planejamento-table-wrapper">
                             <div class="planejamento-loading" id="planejamento-loading" aria-hidden="true" aria-live="polite">
@@ -307,12 +307,12 @@
 
                 <div class="dashboard-section" id="gestao-cadastros-section">
                     <div class="gestao-cadastros" id="gestao-cadastros">
-                        <header class="gestao-cadastros-header">
-                            <div class="gestao-cadastros-heading">
+                        <header class="gestao-cadastros-header page-header">
+                            <div class="gestao-cadastros-heading page-header-title">
                                 <h2><i class="fas fa-layer-group"></i> Gestão de Cadastros</h2>
                                 <p>Mantenha atualizados os cadastros de especialidades, categorias, ilhas e salas com histórico auditável.</p>
                             </div>
-                            <div class="gestao-cadastros-actions">
+                            <div class="gestao-cadastros-actions page-header-actions">
                                 <span class="gestao-cadastros-update" id="gestao-cadastros-atualizado" aria-live="polite"></span>
                                 <button class="btn btn-secondary" id="gestao-cadastros-refresh" type="button">
                                     <i class="fas fa-rotate" aria-hidden="true"></i>
@@ -619,19 +619,19 @@
 
                 <div class="dashboard-section" id="medicos-section">
                     <div class="medicos-container">
-                        <div class="medicos-header">
-                            <div>
+                        <div class="medicos-header page-header">
+                            <div class="page-header-title">
                                 <h2><i class="fas fa-user-md"></i> Acompanhamento de Médicos</h2>
                                 <p>Monitore frequência, atrasos e horários padrão para antecipar ajustes na escala médica.</p>
                             </div>
-                            <div class="medicos-highlight" id="medicos-highlight" data-status="vazio">
+                            <div class="medicos-highlight page-header-actions" id="medicos-highlight" data-status="vazio">
                                 <span class="medicos-highlight-label">Maior atraso registrado</span>
                                 <strong id="medicos-highlight-nome">Nenhum registro</strong>
                                 <span id="medicos-highlight-valor">0 min</span>
                             </div>
                         </div>
 
-                        <div class="medicos-filtros" id="medicos-filtros">
+                        <div class="medicos-filtros page-filters page-filters-grid" id="medicos-filtros">
                             <div class="medicos-filtro medicos-filtro-busca">
                                 <label for="medicos-busca">Buscar profissional</label>
                                 <div class="medicos-busca-input">
@@ -722,12 +722,12 @@
 
                 <div class="dashboard-section" id="logs-section">
                     <section class="logs-container" aria-label="Auditoria e monitoramento de logs">
-                        <div class="logs-header">
-                            <div class="logs-header-info">
+                        <div class="logs-header page-header">
+                            <div class="logs-header-info page-header-title">
                                 <h2><i class="fas fa-clipboard-list"></i> Logs e Auditoria</h2>
                                 <p>Visualize eventos críticos, acompanhe alertas configurados e mantenha o histórico de auditoria sempre organizado.</p>
                             </div>
-                            <div class="logs-header-actions">
+                            <div class="logs-header-actions page-header-actions">
                                 <span class="logs-sync-indicator" id="logs-ultima-sincronizacao">
                                     <i class="fas fa-clock" aria-hidden="true"></i>
                                     <span>Sincronização: aguardando dados</span>
@@ -773,7 +773,7 @@
                             </article>
                         </div>
 
-                        <div class="logs-quick-filters" role="group" aria-label="Filtros rápidos de auditoria">
+                        <div class="logs-quick-filters page-filters page-filters-inline" role="group" aria-label="Filtros rápidos de auditoria">
                             <span class="logs-quick-title">Atalhos de auditoria:</span>
                             <div class="logs-quick-buttons">
                                 <button class="logs-quick-filter active" type="button" data-logs-filter="todos" data-logs-control>Todos</button>
@@ -975,8 +975,12 @@
                 </div>
 
                 <div class="dashboard-section" id="dashboard-section">
-                    <h2>Dashboards</h2>
-                    <div class="dashboard-controls">
+                    <div class="page-header">
+                        <div class="page-header-title">
+                            <h2>Dashboards</h2>
+                        </div>
+                    </div>
+                    <div class="dashboard-controls page-filters page-filters-inline">
                         <select id="dashboard-periodo">
                             <option value="dia">Dia</option>
                             <option value="semana">Semana</option>
@@ -1381,8 +1385,12 @@
                 </div>
 
                 <div class="dashboard-section" id="relatorios-section">
-                    <h2>Relatórios</h2>
-                    <div class="dashboard-controls">
+                    <div class="page-header">
+                        <div class="page-header-title">
+                            <h2>Relatórios</h2>
+                        </div>
+                    </div>
+                    <div class="dashboard-controls page-filters page-filters-inline">
                         <input type="date" id="relatorio-data-inicio">
                         <input type="date" id="relatorio-data-fim">
                         <button class="btn btn-primary" id="btn-gerar-relatorio">Gerar</button>
@@ -1682,7 +1690,11 @@
                 </div>
 
                 <div class="dashboard-section" id="sala-mes-section">
-                    <h2>Acompanhamento Salas</h2>
+                    <div class="page-header">
+                        <div class="page-header-title">
+                            <h2>Acompanhamento Salas</h2>
+                        </div>
+                    </div>
                     <div class="status-map-card">
                         <div class="status-map-header">
                             <div class="status-map-title">
