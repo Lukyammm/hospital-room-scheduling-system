@@ -1,70 +1,111 @@
-# Sistema de Agendamento integrado ao Google Sheets
+# 🏥 Sistema de Agendamento de Salas (Google Apps Script + Google Sheets)
 
-## Visão geral
-Este projeto entrega uma aplicação web publicada via Google Apps Script que centraliza o agendamento de recursos controlados em uma planilha do Google Sheets. A interface web permite consultar, criar e ajustar reservas em tempo real, mantendo o sincronismo com as abas da planilha sem depender de extensões ou infraestrutura adicional. O Apps Script atua como camada de serviço, expondo os dados do Sheets e orquestrando as regras de negócio diretamente na nuvem Google.
+## Descrição objetiva
+Este projeto é um **WebApp operacional** para gestão de salas e agendamentos, desenvolvido em **Google Apps Script** com dados persistidos em **Google Sheets**. O sistema centraliza a rotina de marcação, bloqueio, monitoramento e auditoria de uso das salas em uma única interface web, com atualização contínua e foco em confiabilidade para operação diária.
 
-## Como o sistema funciona
-1. **Origem dos dados – Google Sheets.** Todas as reservas ficam armazenadas em uma planilha compartilhada, organizada por abas temáticas (planejamento, histórico, configurações, etc.).
-2. **Camada de automação – Google Apps Script.** Os arquivos `CODE.gs` e `script.html` formam o backend que manipula a planilha, aplica validações e devolve os dados para a interface.
-3. **Interface web – HTML Service.** O `Index.html` é servido pelo HtmlService como uma página dinâmica, renderizando o planejamento, histórico e demais componentes com base no estado recebido do Apps Script.
-4. **Estilos incorporados.** O arquivo `style.html` contém os estilos CSS dentro de uma tag `<style>` para que o HtmlService injete tudo em um único template. Assim, o layout é carregado junto com o HTML, evitando latência adicional e mantendo a compatibilidade com o ambiente do Apps Script.
-5. **Atualização em tempo real.** A cada ação do usuário (como criar ou editar um agendamento), a página dispara chamadas para funções do Apps Script. Elas atualizam a planilha e devolvem a resposta para re-renderizar os dados imediatamente, preservando logs no `HISTORICO.md` quando necessário.
+## Problema que o sistema resolve
+Em operações com múltiplas salas e equipes, o agendamento manual em planilhas dispersas costuma gerar:
 
-## Por que `style.html` em vez de `.css`
-No Google Apps Script, o HtmlService não referencia arquivos `.css` externos automaticamente. Manter as regras em `style.html` permite embutir o bloco de estilos via `<?!= HtmlService.createHtmlOutputFromFile('style').getContent(); ?>` dentro do `Index.html`. Dessa forma:
-- O deploy do Web App permanece encapsulado em um único pacote, sem precisar publicar URLs adicionais.
-- O cache do HtmlService garante carregamento mais rápido e consistente.
-- Evitamos erros de CORS ou de caminhos relativos, comuns em ambientes Apps Script.
+- conflito de horários;
+- retrabalho para ajustar ocupação;
+- baixa visibilidade do status por turno;
+- dificuldades para auditoria de alterações;
+- dependência excessiva de pessoas-chave para “organizar a casa”.
 
-## Componentes principais
-- `Index.html`: página principal renderizada para os usuários do Web App.
-- `style.html`: estilos da interface, carregados inline pelo HtmlService.
-- `script.html`: scripts client-side que controlam estado e interações.
-- `CODE.gs`: funções de servidor (Apps Script) responsáveis por autenticação, operações no Sheets e retorno de dados.
-- `DOCUMENTACAO.md`: referência técnica suplementar com detalhes de fluxos específicos.
-- `HISTORICO.md`: registro de evoluções do projeto e correções aplicadas.
+Este sistema transforma a planilha em uma **base de dados estruturada**, com regras de negócio no Apps Script e uma interface de uso rápido para gestão real de rotina.
 
-## Painel de cadastros e auditoria
-### Como acessar
-1. Publique o Web App e abra a interface autenticado com um usuário autorizado.
-2. No menu lateral “Gestão” selecione **Painel de Cadastros**. O cabeçalho exibe a data/hora da última sincronização e um botão para forçar a recarga dos dados.
+## Principais funcionalidades
+- 🔐 **Login com acesso restrito** por matrícula/senha.
+- 🖥️ **Monitor em tempo real** para visualização do status das salas.
+- 📅 **Navegação por data e turno** (manhã, tarde, noite ou dia completo).
+- 🧭 **Filtros avançados** por especialidade, categoria, status e ilha.
+- 📝 **Planejamento operacional** com fluxo de atualização direto na base.
+- 📊 **Dashboards e relatórios** para apoio à decisão.
+- 🧩 **Painel de cadastros** (especialidades, categorias, ilhas e salas).
+- 👨‍⚕️ **Acompanhamento de médicos** e análise de produtividade.
+- 📚 **Logs e auditoria** para rastreabilidade de ações.
+- 🚫 **Controle de bloqueio e status de sala** com governança operacional.
 
-### Fluxo de cadastros
-1. Utilize as abas superiores para alternar entre **Especialidades & Categorias**, **Ilhas**, **Salas** e **Histórico**.
-2. Em cada formulário digite o nome desejado e pressione **Salvar**. Ao editar um registro existente o botão muda automaticamente para **Atualizar** e o formulário é preenchido com os dados atuais.
-3. Ações de exclusão abrem um modal de confirmação destacando os impactos (ex.: ilhas com salas vinculadas exibem a lista de salas e permitem a reassociação imediata).
-4. O painel de salas traz seleção individual ou em lote: marque as caixas desejadas, escolha a ilha alvo e confirme em **Aplicar em lote** para mover várias salas de uma só vez.
-5. Mensagens de feedback em destaque informam o resultado de cada operação e o painel de estatísticas é atualizado em tempo real (totais de cadastros, ilhas sem salas e salas sem ilha).
+## Tecnologias utilizadas
+- **Google Apps Script** (backend, regras e integração com Google Workspace)
+- **Google Sheets** (persistência de dados e estrutura operacional)
+- **HTML5** (estrutura da interface)
+- **CSS3** (estilo e responsividade)
+- **JavaScript (client-side)** (interação e estado da UI)
+- **Chart.js** (visualização gráfica em dashboards)
+- **Font Awesome** (ícones)
+- **Google Fonts (Inter)** (tipografia)
 
-### Auditoria e interpretação do histórico
-1. A aba **Histórico** consulta a aba `LOGS` com o detalhe campo a campo de cada alteração (antes/depois, usuário, ação e timestamp).
-2. Use o formulário de filtros para restringir por entidade, tipo de ação, usuário responsável ou período. O contador resume quantos eventos atendem aos critérios.
-3. Cada registro apresenta uma lista com as alterações aplicadas e, quando houver, observações adicionais enviadas pelo Apps Script.
+## Estrutura do projeto
+```bash
+.
+├── Code.gs       # Regras de negócio e integração com Google Sheets (Apps Script)
+├── index.html    # Estrutura principal da interface WebApp
+├── style.html    # Estilos CSS injetados via HtmlService
+├── script.html   # Lógica client-side e chamadas google.script.run
+├── README.md
+└── PORTFOLIO.md
+```
 
-### Estatísticas e indicadores
-1. Os cards superiores exibem totais consolidados: especialidades ativas, categorias, ilhas, salas, ilhas sem salas e salas sem ilha.
-2. As informações são recalculadas após qualquer operação CRUD ou atualização manual, refletindo exatamente o estado persistido no Google Sheets.
+> Observação: os arquivos `style.html` e `script.html` seguem o padrão do ambiente Google Apps Script (HtmlService), por isso não usam extensão `.css`/`.js` isolada no deploy.
 
-## Checklist de testes manuais
-- [ ] Acessar o Web App publicado e abrir o painel **Gestão > Painel de Cadastros**.
-- [ ] Criar, editar e excluir uma especialidade verificando o feedback de sucesso/erro.
-- [ ] Criar, editar e excluir uma categoria verificando o feedback de sucesso/erro.
-- [ ] Renomear e excluir uma ilha com reassociação opcional de salas.
-- [ ] Criar, editar e excluir uma sala associando-a a diferentes ilhas.
-- [ ] Aplicar a associação em lote de salas e confirmar a atualização das estatísticas.
-- [ ] Consultar o histórico filtrando por entidade e validar os detalhes das mudanças.
-- [ ] Confirmar que o painel de estatísticas reflete os cadastros após as alterações.
-- [ ] Validar o registro dos eventos na aba `LOGS` da planilha.
+## Fluxo de funcionamento
+1. **Usuário acessa o WebApp** e realiza autenticação.
+2. **Frontend (`index.html`)** carrega estilos e scripts via includes (`style.html` e `script.html`).
+3. **Ações de tela** (filtros, cadastro, edição, bloqueios) chamam funções no `Code.gs` com `google.script.run`.
+4. **Apps Script processa as regras** e lê/escreve dados na planilha.
+5. **Resposta retorna para interface**, que atualiza monitor, painéis e indicadores.
+6. **Eventos críticos são registrados** em logs para auditoria.
 
-## Implantação e uso
-1. Abra o editor do Google Apps Script conectado à planilha de agendamentos.
-2. Importe ou atualize os arquivos (`Index.html`, `style.html`, `script.html` e `CODE.gs`) respeitando os nomes exatos.
-3. Ajuste os identificadores de planilha dentro de `CODE.gs`, se necessário, garantindo que o script tenha permissões de leitura e escrita.
-4. Clique em **Deploy > Test deployments** para validar o comportamento com sua conta e confirmar que os dados do Sheets estão sendo carregados corretamente.
-5. Assim que estiver validado, publique em **Deploy > Manage deployments > New deployment**, escolha "Web app", atribua quem pode acessar (por exemplo, qualquer pessoa com o link) e finalize o deploy.
-6. Compartilhe a URL gerada com os usuários. Eles poderão realizar agendamentos via navegador, com todas as ações refletidas imediatamente no Google Sheets.
+## Capturas de tela
+> Substitua os caminhos abaixo pelos prints reais do sistema.
 
-## Limitações e cuidados
-- A velocidade depende diretamente das cotas do Apps Script e do tamanho da planilha. Otimize fórmulas pesadas para evitar lentidão.
-- Garanta que todos os usuários possuam permissão de acesso à planilha ou utilize uma conta de serviço que centralize as operações.
-- Sempre publique atualizações do Web App após qualquer alteração de código; do contrário, os usuários continuarão vendo a versão anterior.
+### Login e controle de acesso
+![Tela de login](./docs/screenshots/login.png)
+
+### Monitor de salas e filtros
+![Monitor operacional](./docs/screenshots/monitor.png)
+
+### Painel de gestão e cadastros
+![Painel de gestão](./docs/screenshots/gestao.png)
+
+### Dashboard e indicadores
+![Dashboard](./docs/screenshots/dashboard.png)
+
+## Como executar
+### 1) Pré-requisitos
+- Conta Google com acesso ao **Google Apps Script**.
+- Uma planilha Google Sheets para servir como base de dados.
+
+### 2) Configuração no Apps Script
+1. Abra o Apps Script vinculado à planilha (ou crie um projeto standalone e depois vincule a base).
+2. Crie/atualize os arquivos com os mesmos nomes deste repositório:
+   - `Code.gs`
+   - `index.html`
+   - `style.html`
+   - `script.html`
+3. Ajuste no `Code.gs` os IDs/nomes de abas e constantes da operação conforme seu ambiente.
+
+### 3) Deploy do WebApp
+1. Clique em **Deploy > New deployment**.
+2. Escolha o tipo **Web app**.
+3. Defina:
+   - **Execute as**: sua conta (ou conta de serviço operacional).
+   - **Who has access**: conforme sua política interna.
+4. Autorize os escopos solicitados pelo Apps Script.
+5. Copie a URL gerada e acesse no navegador.
+
+### 4) Permissões
+- Garanta permissão de leitura/escrita na planilha para a conta executora.
+- Restrinja acesso do WebApp para perfis autorizados.
+
+## Melhorias futuras
+- ✅ Exportação avançada de relatórios (PDF e envio automático por e-mail).
+- ✅ Alertas proativos de conflito de agenda e indisponibilidade crítica.
+- ✅ Trilhas de auditoria com filtros salvos por perfil.
+- ✅ Camada de configurações administrativas versionadas.
+- ✅ Indicadores históricos por período, especialidade e ilha.
+
+## Autor
+**Time de Desenvolvimento / Operação Gama**  
+Sistema desenhado para uso institucional com foco em eficiência operacional, rastreabilidade e redução de falhas manuais.
