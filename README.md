@@ -57,20 +57,22 @@ Este sistema transforma a planilha em uma **base de dados estruturada**, com reg
 5. **Resposta retorna para interface**, que atualiza monitor, painéis e indicadores.
 6. **Eventos críticos são registrados** em logs para auditoria.
 
-## Capturas de tela
-> Imagens demonstrativas para guiar a apresentacao do projeto. Os dados exibidos sao ficticios.
 
-### Login e controle de acesso
-![Tela de login](./docs/screenshots/login.svg)
+## Guia visual do sistema
 
-### Monitor de salas e filtros
+> Mockups demonstrativos do sistema, com dados ficticios e sem informacoes reais de pacientes ou da instituicao.
+
+### Login e acesso
+![Login e acesso](./docs/screenshots/login.svg)
+
+### Monitor operacional
 ![Monitor operacional](./docs/screenshots/monitor.svg)
 
-### Painel de gestão e cadastros
-![Painel de gestão](./docs/screenshots/gestao.svg)
+### Gestao e cadastros
+![Gestao e cadastros](./docs/screenshots/gestao.svg)
 
-### Dashboard e indicadores
-![Dashboard](./docs/screenshots/dashboard.svg)
+### Dashboard executivo
+![Dashboard executivo](./docs/screenshots/dashboard.svg)
 
 ## Como executar
 ### 1) Pré-requisitos
