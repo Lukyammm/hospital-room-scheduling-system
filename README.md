@@ -58,21 +58,24 @@ Este sistema transforma a planilha em uma **base de dados estruturada**, com reg
 6. **Eventos críticos são registrados** em logs para auditoria.
 
 
+
+
+
 ## Guia visual do sistema
 
-> Mockups demonstrativos do sistema, com dados ficticios e sem informacoes reais de pacientes ou da instituicao.
+> Telas demonstrativas baseadas nos componentes, textos, cores e fluxos encontrados no código deste repositório. Os dados exibidos são fictícios e não representam pacientes, profissionais ou instituições reais.
 
-### Login e acesso
-![Login e acesso](./docs/screenshots/login.svg)
+### Gama - login
+![Gama - login](./docs/screenshots/login.svg)
 
-### Monitor operacional
-![Monitor operacional](./docs/screenshots/monitor.svg)
+### Gama - monitor de salas
+![Gama - monitor de salas](./docs/screenshots/monitor.svg)
 
-### Gestao e cadastros
-![Gestao e cadastros](./docs/screenshots/gestao.svg)
+### Gama - gestão e cadastros
+![Gama - gestão e cadastros](./docs/screenshots/gestao.svg)
 
-### Dashboard executivo
-![Dashboard executivo](./docs/screenshots/dashboard.svg)
+### Gama - dashboard executivo
+![Gama - dashboard executivo](./docs/screenshots/dashboard.svg)
 
 ## Como executar
 ### 1) Pré-requisitos
