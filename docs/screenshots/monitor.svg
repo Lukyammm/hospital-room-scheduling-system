@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Gama - room monitor guide</title>
+  <desc id="desc">Demo guide image for operational room monitor.</desc>
+  <rect width="1280" height="720" fill="#f8fafc"/>
+  <rect x="54" y="44" width="1172" height="632" rx="24" fill="#fff" stroke="#dbe4f0"/>
+  <text x="92" y="102" font-family="Inter,Arial,sans-serif" font-size="31" font-weight="700" fill="#0f172a">Monitor operacional de salas</text>
+  <text x="92" y="130" font-family="Inter,Arial,sans-serif" font-size="15" fill="#64748b">Imagem demonstrativa - agenda e status ficticios</text>
+  <rect x="92" y="170" width="220" height="430" rx="18" fill="#0f172a"/>
+  <text x="124" y="220" font-family="Inter,Arial,sans-serif" font-size="18" font-weight="700" fill="#fff">Filtros</text>
+  <rect x="124" y="252" width="150" height="38" rx="9" fill="#1e293b"/>
+  <text x="146" y="277" font-family="Inter,Arial,sans-serif" font-size="14" fill="#e2e8f0">Hoje</text>
+  <rect x="124" y="316" width="150" height="38" rx="9" fill="#1e293b"/>
+  <text x="146" y="341" font-family="Inter,Arial,sans-serif" font-size="14" fill="#e2e8f0">Manha</text>
+  <rect x="350" y="178" width="220" height="128" rx="16" fill="#dcfce7" stroke="#86efac"/>
+  <text x="380" y="224" font-family="Inter,Arial,sans-serif" font-size="18" fill="#166534">Sala 01</text>
+  <text x="380" y="262" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="700" fill="#14532d">Livre</text>
+  <rect x="602" y="178" width="220" height="128" rx="16" fill="#fee2e2" stroke="#fca5a5"/>
+  <text x="632" y="224" font-family="Inter,Arial,sans-serif" font-size="18" fill="#991b1b">Sala 02</text>
+  <text x="632" y="262" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="700" fill="#7f1d1d">Ocupada</text>
+  <rect x="854" y="178" width="220" height="128" rx="16" fill="#fef3c7" stroke="#fcd34d"/>
+  <text x="884" y="224" font-family="Inter,Arial,sans-serif" font-size="18" fill="#92400e">Sala 03</text>
+  <text x="884" y="262" font-family="Inter,Arial,sans-serif" font-size="26" font-weight="700" fill="#78350f">Reservada</text>
+  <rect x="350" y="350" width="724" height="188" rx="16" fill="#fff" stroke="#dbe4f0"/>
+  <text x="380" y="394" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#0f172a">Linha do tempo</text>
+  <rect x="380" y="430" width="160" height="38" rx="8" fill="#dbeafe"/>
+  <rect x="560" y="430" width="230" height="38" rx="8" fill="#fecaca"/>
+  <rect x="810" y="430" width="180" height="38" rx="8" fill="#bbf7d0"/>
+</svg>

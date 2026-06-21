@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Gama - management panel guide</title>
+  <desc id="desc">Demo guide image for management and registration panel.</desc>
+  <rect width="1280" height="720" fill="#f6f8fb"/>
+  <rect x="58" y="44" width="1164" height="632" rx="24" fill="#fff" stroke="#dbe4f0"/>
+  <text x="96" y="98" font-family="Inter,Arial,sans-serif" font-size="31" font-weight="700" fill="#0f172a">Painel de gestao e cadastros</text>
+  <text x="96" y="126" font-family="Inter,Arial,sans-serif" font-size="15" fill="#64748b">Imagem demonstrativa - dados ficticios</text>
+  <rect x="96" y="166" width="260" height="420" rx="18" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="126" y="214" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#1e3a8a">Cadastros</text>
+  <text x="126" y="262" font-family="Inter,Arial,sans-serif" font-size="16" fill="#334155">Especialidades</text>
+  <text x="126" y="310" font-family="Inter,Arial,sans-serif" font-size="16" fill="#334155">Categorias</text>
+  <text x="126" y="358" font-family="Inter,Arial,sans-serif" font-size="16" fill="#334155">Ilhas</text>
+  <text x="126" y="406" font-family="Inter,Arial,sans-serif" font-size="16" fill="#334155">Salas</text>
+  <rect x="396" y="166" width="720" height="420" rx="18" fill="#fff" stroke="#dbe4f0"/>
+  <text x="432" y="214" font-family="Inter,Arial,sans-serif" font-size="20" font-weight="700" fill="#0f172a">Planejamento operacional</text>
+  <rect x="432" y="250" width="620" height="42" fill="#f1f5f9"/>
+  <text x="456" y="277" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#334155">Sala</text>
+  <text x="650" y="277" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#334155">Especialidade</text>
+  <text x="900" y="277" font-family="Inter,Arial,sans-serif" font-size="14" font-weight="700" fill="#334155">Status</text>
+  <text x="456" y="336" font-family="Inter,Arial,sans-serif" font-size="15" fill="#334155">Sala 01</text>
+  <text x="650" y="336" font-family="Inter,Arial,sans-serif" font-size="15" fill="#334155">Clinica</text>
+  <rect x="900" y="314" width="94" height="30" rx="15" fill="#dcfce7"/>
+  <text x="920" y="335" font-family="Inter,Arial,sans-serif" font-size="13" fill="#166534">Ativa</text>
+  <text x="456" y="396" font-family="Inter,Arial,sans-serif" font-size="15" fill="#334155">Sala 02</text>
+  <text x="650" y="396" font-family="Inter,Arial,sans-serif" font-size="15" fill="#334155">Cirurgia</text>
+  <rect x="900" y="374" width="116" height="30" rx="15" fill="#fee2e2"/>
+  <text x="920" y="395" font-family="Inter,Arial,sans-serif" font-size="13" fill="#991b1b">Bloqueada</text>
+</svg>

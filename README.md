@@ -58,19 +58,19 @@ Este sistema transforma a planilha em uma **base de dados estruturada**, com reg
 6. **Eventos críticos são registrados** em logs para auditoria.
 
 ## Capturas de tela
-> Substitua os caminhos abaixo pelos prints reais do sistema.
+> Imagens demonstrativas para guiar a apresentacao do projeto. Os dados exibidos sao ficticios.
 
 ### Login e controle de acesso
-![Tela de login](./docs/screenshots/login.png)
+![Tela de login](./docs/screenshots/login.svg)
 
 ### Monitor de salas e filtros
-![Monitor operacional](./docs/screenshots/monitor.png)
+![Monitor operacional](./docs/screenshots/monitor.svg)
 
 ### Painel de gestão e cadastros
-![Painel de gestão](./docs/screenshots/gestao.png)
+![Painel de gestão](./docs/screenshots/gestao.svg)
 
 ### Dashboard e indicadores
-![Dashboard](./docs/screenshots/dashboard.png)
+![Dashboard](./docs/screenshots/dashboard.svg)
 
 ## Como executar
 ### 1) Pré-requisitos
