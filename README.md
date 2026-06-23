@@ -1,6 +1,6 @@
-# Gama Room Scheduling System
+# Hospital Room Scheduling System
 
-Repository: `Gama_agendamento_sala`
+Repository: `hospital-room-scheduling-system`
 
 ## Overview
 
