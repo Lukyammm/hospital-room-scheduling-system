@@ -1,52 +1,62 @@
-# Hospital Room Scheduling System
+﻿<div align="center">
+  
+  # Hospital Room Scheduling System
 
-Repository: `hospital-room-scheduling-system`
+  ![Status](https://img.shields.io/badge/Status-Ativo-success?style=for-the-badge)
+  ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+  ![Version](https://img.shields.io/badge/Version-1.0-orange?style=for-the-badge)
 
-## Overview
+</div>
 
-Room scheduling and monitoring system for hospital spaces, shifts, professionals, dashboards, registrations, and audit logs.
+<br/>
 
-## Main Capabilities
+## ðŸŽ¯ VisÃ£o Geral
+**Hospital Room Scheduling System** Ã© uma soluÃ§Ã£o focada na Ã¡rea da saÃºde e operaÃ§Ãµes clÃ­nicas. Este repositÃ³rio contÃ©m as ferramentas e os recursos necessÃ¡rios para melhorar processos, trazer clareza de dados e otimizar fluxos de trabalho. 
 
-- Login screen with staff identifier and password fields.
-- Real-time room monitor with date and shift controls.
-- Planning, dashboard, report, registration, physician, room-month, and log areas.
-- Administrative registration surfaces for rooms, islands, specialties, and professionals.
+> *Nota: Este projeto faz parte do portfÃ³lio de soluÃ§Ãµes clÃ­nicas e analÃ­ticas para gestÃ£o hospitalar e eficiÃªncia corporativa.*
 
-## Operating Flow
+---
 
-1. The user signs in with a staff identifier.
-2. The monitor shows room availability for the selected date and shift.
-3. Planning and registrations keep room usage aligned with the official schedule.
-4. Dashboards and logs support trend review and operational auditing.
+## âœ¨ Principais Recursos
 
-## Visual System Guide
+- **ðŸ“Š Dashboards AnalÃ­ticos:** VisualizaÃ§Ã£o clara e moderna de mÃ©tricas crÃ­ticas.
+- **âš™ï¸ OtimizaÃ§Ã£o de Processos:** Fluxos de trabalho digitais que reduzem o esforÃ§o burocrÃ¡tico.
+- **ðŸ¥ Foco ClÃ­nico/Hospitalar:** Desenvolvido visando a realidade das operaÃ§Ãµes de saÃºde.
+- **ðŸ”’ SeguranÃ§a e Qualidade:** Foco em compliance e melhoria contÃ­nua.
 
-> The screens below are documentation mockups based on the components, labels, colors, and workflows found in this repository. All displayed data is fictitious and does not represent real patients, staff members, or institutions.
+---
 
-### Gama - login
-![Gama - login](./docs/screenshots/login.svg)
+## ðŸ’» Tecnologias e Estrutura
 
-### Gama - room monitor
-![Gama - room monitor](./docs/screenshots/monitor.svg)
+Este projeto utiliza prÃ¡ticas modernas de desenvolvimento para garantir manutenÃ§Ã£o simplificada e escalabilidade.
 
-### Gama - management and registrations
-![Gama - management and registrations](./docs/screenshots/management.svg)
+- PadrÃµes visuais atualizados
+- Estrutura clara de diretÃ³rios
+- Foco em usabilidade
 
-### Gama - executive dashboard
-![Gama - executive dashboard](./docs/screenshots/dashboard.svg)
+---
 
-## Data Privacy
+## ðŸš€ Como ComeÃ§ar
 
-The repository documentation and guide images use fictitious sample data only.
+1. Clone o repositÃ³rio:
+   `ash
+   git clone https://github.com/Lukyammm/hospital-room-scheduling-system.git
+   `
+2. Acesse a pasta do projeto:
+   `ash
+   cd hospital-room-scheduling-system
+   `
+3. Consulte a documentaÃ§Ã£o interna para mais detalhes de configuraÃ§Ã£o e execuÃ§Ã£o.
 
-## Technologies
+---
 
-- JavaScript
-- HTML/CSS
-- Google Apps Script
-- Google Sheets
+## ðŸ¤ Contato e ContribuiÃ§Ã£o
 
-## Status
+Feito com dedicaÃ§Ã£o por **Lukyam Madeira**.
+Sinta-se Ã  vontade para explorar, abrir *issues* para dÃºvidas ou sugerir melhorias.
 
-Completed
+<div align="center">
+  <a href="https://github.com/Lukyammm">
+    <img src="https://img.shields.io/badge/GitHub-Lukyammm-181717?style=flat-square&logo=github" alt="GitHub" />
+  </a>
+</div>
